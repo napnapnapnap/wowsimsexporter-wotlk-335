@@ -213,32 +213,16 @@ end
 
 
 function WowSimsExporter:ParseGems(itemLink)
+	local Ids = {}
+	for i = 1, 4 do
+		local _, gemLink = GetItemGem(itemLink, i)
+		if (gemLink) then
+			local _, _, _, _, Id = string.find(gemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+)")
+			Ids[i] = Id
+		end
+	end
 
-    local _, gemLink1 = GetItemGem(itemLink, 1)
-    local _, gemLink2 = GetItemGem(itemLink, 2)
-    local _, gemLink3 = GetItemGem(itemLink, 3)
-    local _, gemLink4 = GetItemGem(itemLink, 4)
-
-    local Id1, Id2, Id3, Id4 = 0, 0, 0, 0
-    if (gemLink1) then
-        _, _, _, _, Id1 = string.find(gemLink1,
-            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-    end
-    if (gemLink2) then
-        _, _, _, _, Id2 = string.find(gemLink2,
-            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-    end
-    if (gemLink3) then
-        _, _, _, _, Id3 = string.find(gemLink3,
-            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-    end
-
-    if (gemLink4) then
-        _, _, _, _, Id4 = string.find(gemLink4,
-            "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-    end
-
-    return Id1, Id2, Id3, Id4
+	return unpack(Ids)
 end
 
 
