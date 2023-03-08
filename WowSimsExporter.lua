@@ -403,6 +403,7 @@ into the provided box and click "Import"
 
 end
 
+-- OVERRIDE, we try to not use events
 
 -- Borrowed from rating buster!!
 -- As of Classic Patch 3.4.0, GetTalentInfo indices no longer correlate

@@ -1,5 +1,5 @@
 # wowsimsexporter
-An exporter addon for World Of Warcraft: WOTLK Classic Sim at  https://wowsims.github.io/wotlk
+An exporter addon for World Of Warcraft: WOTLK 3.3.5 Sim at  https://wowsims.github.io/wotlk
 
 There is a channel on the wowsims discord
 
