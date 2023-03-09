@@ -162,7 +162,7 @@ end
 
 function WowSimsExporter:OpenWindow(input)
     if not input or input:trim() == "" then
-		self:CreateWindow()
+		self:CreateWindow(true)
 	elseif (input == "export") then        
         self:CreateWindow(true)
     elseif (input=="options") then           
@@ -292,10 +292,10 @@ function WowSimsExporter:CreateCopyDialog(text)
 	local editbox = AceGUI:Create("EditBox")
     editbox:SetText(text)
     editbox:SetFullWidth(true)
-    --editbox:DisableButton(true)
+    editbox:DisableButton(true)
 
-	--editbox:SetFocus()
-	--editbox:HighlightText()
+	editbox:SetFocus()
+	editbox:HighlightText()
 	
 	frame:AddChild(editbox)
 
@@ -321,13 +321,13 @@ function WowSimsExporter:CreateWindow(generate)
     jsonbox:SetLabel("Copy and paste into the websites importer!")
     jsonbox:SetFullWidth(true)
     jsonbox:SetFullHeight(true)
-    --jsonbox:DisableButton(true)
+    jsonbox:DisableButton(true)
    
 	local function l_Generate()
 		WowSimsExporter.Character = WowSimsExporter:GetGearEnchantGems("player")
 		jsonbox:SetText(LibParse:JSONEncode(WowSimsExporter.Character)) 
-		--jsonbox:HighlightText()
-		--jsonbox:SetFocus()
+		jsonbox:HighlightText()
+		jsonbox:SetFocus()
 
 		frame:SetStatusText("Data Generated!")
 	end
