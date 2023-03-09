@@ -11,13 +11,15 @@ Invite is located here https://discord.gg/N9ZgAMXQ3p
 
 
 **THIS IS IN TESTING, THE ADDON MAY NOT WORK**
-If this is the case, don't open a ticket on the wowsims github, open it here <https://github.com/generalwrex/wowsimsexporter/issues>
+If this is the case, don't open a ticket on the wowsims github, open it here <https://github.com/napnapnapnap/wowsimsexporter-wotlk-3.3.5/issues>
 
 **Getting the addon**
 
-If anyone would like to test it, you can just download it from the releases on the wowsims under [Addon] and you can also find it on Curseforge
+Use the greed "Code" button and download the ZIP file.
 
+Extract the `wowsimsexporter-wotlk-3.3.5-main` folder inside `interface\addons` and rename it to `WowSimsExporter`
 
+![image](https://user-images.githubusercontent.com/24717126/223955518-e265dbcb-f1a0-4e6d-88d1-3b91071a8d7e.png)
 **To use the addon**
 
     /wse - will open up the options window - *wip* changes do nothing atm
