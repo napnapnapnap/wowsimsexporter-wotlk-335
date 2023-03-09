@@ -15,7 +15,7 @@ If this is the case, don't open a ticket on the wowsims github, open it here <ht
 
 **Getting the addon**
 
-Use the greed "Code" button and download the ZIP file.
+Use the green "Code" button and download the ZIP file.
 
 Extract the `wowsimsexporter-wotlk-3.3.5-main` folder inside `interface\addons` and rename it to `WowSimsExporter`
 
