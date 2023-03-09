@@ -20,6 +20,7 @@ Use the green "Code" button and download the ZIP file.
 Extract the `wowsimsexporter-wotlk-3.3.5-main` folder inside `interface\addons` and rename it to `WowSimsExporter`
 
 ![image](https://user-images.githubusercontent.com/24717126/223955518-e265dbcb-f1a0-4e6d-88d1-3b91071a8d7e.png)
+
 **To use the addon**
 
     /wse - will open up the options window - *wip* changes do nothing atm
