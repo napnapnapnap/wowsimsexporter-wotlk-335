@@ -387,23 +387,16 @@ into the provided box and click "Import"
 
 end
 
--- OVERRIDE, we try to not use events
 
--- Borrowed from rating buster!!
--- As of Classic Patch 3.4.0, GetTalentInfo indices no longer correlate
--- to their positions in the tree. Building a talent cache ordered by
--- tier then column allows us to replicate the previous behavior.
-local orderedTalentCache = {}
-do
-	--local f = CreateFrame("Frame")
-	--f:RegisterEvent("SPELLS_CHANGED")
-	--f:SetScript("OnEvent", function()
+function WowSimsExporter:GetOrderedTalentInfo(tab, num)
+	local orderedTalentCache = {}
+	do
 		local temp = {}
 		for tab = 1, GetNumTalentTabs() do
 			temp[tab] = {}
 			local products = {}
-			for i = 1,GetNumTalents(tab) do
-				local name, _, tier, column = GetTalentInfo(tab,i)
+				for i = 1,GetNumTalents(tab) do
+					local name, _, tier, column = GetTalentInfo(tab,i)
 				local product = (tier - 1) * 4 + column
 				temp[tab][product] = i
 				table.insert(products, product)
@@ -418,15 +411,10 @@ do
 				j = j + 1
 			end
 		end
-		--f:UnregisterEvent("SPELLS_CHANGED")
-	--end)
-end
+	end
 
-
-function WowSimsExporter:GetOrderedTalentInfo(tab, num)
 	return GetTalentInfo(tab, orderedTalentCache[tab][num])
 end
-
 
 
 function WowSimsExporter:OnEnable()

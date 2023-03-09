@@ -6,7 +6,7 @@
 ## SavedVariables: WSEDB
 ## OptionalDeps: Ace3
 
-Libs\LibParse\LibParse.lua
+Libs\LibParse\Load.xml
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\AceAddon-3.0\AceAddon-3.0.xml

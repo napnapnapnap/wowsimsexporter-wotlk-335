@@ -1,4 +1,4 @@
-local Type, Version = "MultiLineEditBox", 22
+local Type, Version = "MultiLineEditBox", 28
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -6,13 +6,51 @@ if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 local pairs = pairs
 
 -- WoW APIs
-local GetCursorInfo, GetSpellName, ClearCursor = GetCursorInfo, GetSpellName, ClearCursor
+local GetCursorInfo, GetSpellInfo, ClearCursor = GetCursorInfo, GetSpellInfo, ClearCursor
 local CreateFrame, UIParent = CreateFrame, UIParent
 local _G = _G
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: ACCEPT, ChatFontNormal
+
+--[[-----------------------------------------------------------------------------
+Support functions
+-------------------------------------------------------------------------------]]
+
+if not AceGUIMultiLineEditBoxInsertLink then
+	-- upgradeable hook
+	hooksecurefunc("ChatEdit_InsertLink", function(...) return _G.AceGUIMultiLineEditBoxInsertLink(...) end)
+end
+
+function _G.AceGUIMultiLineEditBoxInsertLink(text)
+	for i = 1, AceGUI:GetWidgetCount(Type) do
+		local editbox = _G[("MultiLineEditBox%uEdit"):format(i)]
+		if editbox and editbox:IsVisible() and editbox:HasFocus() then
+			editbox:Insert(text)
+			return true
+		end
+	end
+end
+
+
+local function Layout(self)
+	self:SetHeight(self.numlines * 14 + (self.disablebutton and 19 or 41) + self.labelHeight)
+
+	if self.labelHeight == 0 then
+		self.scrollBar:SetPoint("TOP", self.frame, "TOP", 0, -23)
+	else
+		self.scrollBar:SetPoint("TOP", self.label, "BOTTOM", 0, -19)
+	end
+
+	if self.disablebutton then
+		self.scrollBar:SetPoint("BOTTOM", self.frame, "BOTTOM", 0, 21)
+		self.scrollBG:SetPoint("BOTTOMLEFT", 0, 4)
+	else
+		self.scrollBar:SetPoint("BOTTOM", self.button, "TOP", 0, 18)
+		self.scrollBG:SetPoint("BOTTOMLEFT", self.button, "TOPLEFT")
+	end
+end
 
 --[[-----------------------------------------------------------------------------
 Scripts
@@ -40,6 +78,7 @@ end
 
 local function OnEditFocusLost(self)                                             -- EditBox
 	self:HighlightText(0, 0)
+	self.obj:Fire("OnEditFocusLost")
 end
 
 local function OnEnter(self)                                                     -- EditBox / ScrollFrame
@@ -67,10 +106,7 @@ end
 local function OnReceiveDrag(self)                                               -- EditBox / ScrollFrame
 	local type, id, info = GetCursorInfo()
 	if type == "spell" then
-		info, id = GetSpellName(id, info)
-		if id and id:match("%d") then
-			info = info .. "(" .. id .. ")"
-		end
+		info = GetSpellInfo(id, info)
 	elseif type ~= "item" then
 		return
 	end
@@ -109,26 +145,32 @@ local function OnVerticalScroll(self, offset)                                   
 	editBox:SetHitRectInsets(0, 0, offset, editBox:GetHeight() - offset - self:GetHeight())
 end
 
+local function OnShowFocus(frame)
+	frame.obj.editBox:SetFocus()
+	frame:SetScript("OnShow", nil)
+end
+
+local function OnEditFocusGained(frame)
+	AceGUI:SetFocus(frame.obj)
+	frame.obj:Fire("OnEditFocusGained")
+end
+
 --[[-----------------------------------------------------------------------------
 Methods
 -------------------------------------------------------------------------------]]
 local methods = {
-	["GetText"] = function(self)
-		return self.editBox:GetText()
-	end,
-
 	["OnAcquire"] = function(self)
 		self.editBox:SetText("")
 		self:SetDisabled(false)
 		self:SetWidth(200)
+		self:DisableButton(false)
 		self:SetNumLines()
 		self.entered = nil
 		self:SetMaxLetters(0)
 	end,
 
 	["OnRelease"] = function(self)
-		self.frame:ClearAllPoints()
-		self.frame:Hide()
+		self:ClearFocus()
 	end,
 
 	["SetDisabled"] = function(self, disabled)
@@ -153,32 +195,70 @@ local methods = {
 			self.label:SetText(text)
 			if self.labelHeight ~= 10 then
 				self.labelHeight = 10
-				self.scrollBar:SetPoint("TOP", self.label, "BOTTOM", 0, -19)
-				self:SetHeight(self.frame.height + 10)
 				self.label:Show()
 			end
 		elseif self.labelHeight ~= 0 then
 			self.labelHeight = 0
 			self.label:Hide()
-			self.scrollBar:SetPoint("TOP", self.frame, "TOP", 0, -23)
-			self:SetHeight(self.frame.height - 10)
 		end
+		Layout(self)
 	end,
 
 	["SetNumLines"] = function(self, value)
 		if not value or value < 4 then
 			value = 4
 		end
-		self:SetHeight(value * 14 + 41 + self.labelHeight)
+		self.numlines = value
+		Layout(self)
 	end,
 
 	["SetText"] = function(self, text)
 		self.editBox:SetText(text)
 	end,
 
+	["GetText"] = function(self)
+		return self.editBox:GetText()
+	end,
+
 	["SetMaxLetters"] = function (self, num)
 		self.editBox:SetMaxLetters(num or 0)
-	end
+	end,
+
+	["DisableButton"] = function(self, disabled)
+		self.disablebutton = disabled
+		if disabled then
+			self.button:Hide()
+		else
+			self.button:Show()
+		end
+		Layout(self)
+	end,
+
+	["ClearFocus"] = function(self)
+		self.editBox:ClearFocus()
+		self.frame:SetScript("OnShow", nil)
+	end,
+
+	["SetFocus"] = function(self)
+		self.editBox:SetFocus()
+		if not self.frame:IsShown() then
+			self.frame:SetScript("OnShow", OnShowFocus)
+		end
+	end,
+
+	["HighlightText"] = function(self, from, to)
+		self.editBox:HighlightText(from, to)
+	end,
+
+	["GetCursorPosition"] = function(self)
+		return self.editBox:GetCursorPosition()
+	end,
+
+	["SetCursorPosition"] = function(self, ...)
+		return self.editBox:SetCursorPosition(...)
+	end,
+
+
 }
 
 --[[-----------------------------------------------------------------------------
@@ -193,7 +273,7 @@ local backdrop = {
 local function Constructor()
 	local frame = CreateFrame("Frame", nil, UIParent)
 	frame:Hide()
-	
+
 	local widgetNum = AceGUI:GetNextWidgetNum(Type)
 
 	local label = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -204,13 +284,13 @@ local function Constructor()
 	label:SetHeight(10)
 
 	local button = CreateFrame("Button", ("%s%dButton"):format(Type, widgetNum), frame, "UIPanelButtonTemplate2")
-	button:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 4)
+	button:SetPoint("BOTTOMLEFT", 0, 4)
 	button:SetHeight(22)
 	button:SetWidth(label:GetStringWidth() + 24)
 	button:SetText(ACCEPT)
 	button:SetScript("OnClick", OnClick)
 	button:Disable()
-	
+
 	local text = button:GetFontString()
 	text:ClearAllPoints()
 	text:SetPoint("TOPLEFT", button, "TOPLEFT", 5, -5)
@@ -242,7 +322,7 @@ local function Constructor()
 	scrollFrame:SetScript("OnSizeChanged", OnSizeChanged)
 	scrollFrame:HookScript("OnVerticalScroll", OnVerticalScroll)
 
-	local editBox = CreateFrame("EditBox", nil, scrollFrame)
+	local editBox = CreateFrame("EditBox", ("%s%dEdit"):format(Type, widgetNum), scrollFrame)
 	editBox:SetAllPoints()
 	editBox:SetFontObject(ChatFontNormal)
 	editBox:SetMultiLine(true)
@@ -258,6 +338,8 @@ local function Constructor()
 	editBox:SetScript("OnReceiveDrag", OnReceiveDrag)
 	editBox:SetScript("OnTextChanged", OnTextChanged)
 	editBox:SetScript("OnTextSet", OnTextSet)
+	editBox:SetScript("OnEditFocusGained", OnEditFocusGained)
+
 
 	scrollFrame:SetScrollChild(editBox)
 
@@ -267,7 +349,9 @@ local function Constructor()
 		frame       = frame,
 		label       = label,
 		labelHeight = 10,
+		numlines    = 4,
 		scrollBar   = scrollBar,
+		scrollBG    = scrollBG,
 		scrollFrame = scrollFrame,
 		type        = Type
 	}
@@ -276,8 +360,7 @@ local function Constructor()
 	end
 	button.obj, editBox.obj, scrollFrame.obj = widget, widget, widget
 
-	AceGUI:RegisterAsWidget(widget)
-	return widget
+	return AceGUI:RegisterAsWidget(widget)
 end
 
 AceGUI:RegisterWidgetType(Type, Constructor, Version)
