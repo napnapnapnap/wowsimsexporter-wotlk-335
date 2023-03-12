@@ -88,6 +88,7 @@ function JsonWriter:New()
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
+	self.buffer = {}
 	return o
 end
 
