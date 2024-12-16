@@ -1,7 +1,9 @@
 # WowSimsExporter
-An exporter addon for World Of Warcraft: WOTLK 3.3.5 Sim at  https://wowsims.github.io/wotlk
+An exporter addon for World Of Warcraft: WOTLK 3.3.5 Sim.
 
-![image](https://user-images.githubusercontent.com/24717126/223954736-6f37fff7-5760-47f1-90fd-0c4473e80920.png)
+**Type /wse in-game, in game and it creates text that you can copy/paste into https://wowsims.github.io/wotlk**
+
+![wse](https://github.com/user-attachments/assets/a8c430f7-9528-47e8-9e0c-aaa1f8308588)
 
 **ORIGINAL AT https://github.com/wowsims/wotlk/tree/master/tools/wowsimsexporter**
 
@@ -17,9 +19,9 @@ If this is the case, don't open a ticket on the wowsims github, open it here <ht
 
 Use the green "Code" button and download the ZIP file.
 
-Copy the `WowSimsExporter` folder inside `interface\addons`
+![wse](https://github.com/user-attachments/assets/6038764d-d48c-4c0b-a193-a39dc1d2cc0f)
 
-![image](https://user-images.githubusercontent.com/24717126/223955518-e265dbcb-f1a0-4e6d-88d1-3b91071a8d7e.png)
+Copy the `WowSimsExporter` folder inside `interface\addons`
 
 **To use the addon**
 
