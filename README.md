@@ -1,7 +1,7 @@
 # WowSimsExporter
 An exporter addon for World Of Warcraft: WOTLK 3.3.5 Sim.
 
-**Type /wse in-game, it creates text that you can copy/paste into https://idanwotlksim.pages.dev/wotlk/**
+**Type /wse in-game, it creates text that you can copy/paste into https://poli93.github.io/wotlk/**
 
 ![wse](https://github.com/user-attachments/assets/a8c430f7-9528-47e8-9e0c-aaa1f8308588)
 
