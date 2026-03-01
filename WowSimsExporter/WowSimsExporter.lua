@@ -1,6 +1,8 @@
 -- Author      : generalwrex (Natop on Myzrael TBC)
 -- Create Date : 1/28/2022 9:30:08 AM
 
+-- Update Date : 2025-03-01 Idan - Backported generate bags data functionality for batch sim
+
 WowSimsExporter = LibStub("AceAddon-3.0"):NewAddon("WowSimsExporter", "AceConsole-3.0", "AceEvent-3.0")
 
 
@@ -201,6 +203,32 @@ function WowSimsExporter:GetGearEnchantGems(type)
     return self.Character
 end
 
+function WowSimsExporter:GetBagItems()
+    local bagItems = { items = {} }
+
+    for bag = 0, 4 do
+        for slot = 1, GetContainerNumSlots(bag) do
+            local itemLink = GetContainerItemLink(bag, slot)
+            
+            if itemLink then
+                local Id, Enchant = self:ParseItemLink(itemLink)
+                local Gem1, Gem2, Gem3, Gem4 = self:ParseGems(itemLink)
+
+                if Id then
+                    local item = {}
+                    item.id = tonumber(Id)
+                    item.enchant = tonumber(Enchant)
+                    item.gems = {tonumber(Gem1), tonumber(Gem2), tonumber(Gem3), tonumber(Gem4)}
+
+                    table.insert(bagItems.items, item)
+                end
+            end
+        end
+    end
+
+    return bagItems
+end
+
 
 function WowSimsExporter:ParseItemLink(itemLink)
     local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name =
@@ -341,6 +369,17 @@ function WowSimsExporter:CreateWindow(generate)
 		l_Generate()
 	end)
 	
+	local bagButton = AceGUI:Create("Button")
+    bagButton:SetText("Generate Bag Data")
+    bagButton:SetWidth(200)
+    bagButton:SetCallback("OnClick", function()		
+        local bags = WowSimsExporter:GetBagItems()
+        jsonbox:SetText(LibParse:JSONEncode(bags)) 
+        jsonbox:HighlightText()
+        jsonbox:SetFocus()
+        frame:SetStatusText("Bag Data Generated!")
+    end)
+	
 	
 	local icon = AceGUI:Create("Icon")
 	icon:SetImage("Interface\\AddOns\\wowsimsexporter\\Skins\\wowsims.tga") 
@@ -381,6 +420,7 @@ into the provided box and click "Import"
 		frame:AddChild(label)
 		WowSimsExporter:BuildLinks(frame, char)
 		frame:AddChild(button)
+		frame:AddChild(bagButton)
 		frame:AddChild(jsonbox)
 
 	end
