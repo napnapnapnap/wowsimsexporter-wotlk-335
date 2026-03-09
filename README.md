@@ -9,7 +9,7 @@ An exporter addon for World Of Warcraft: WOTLK 3.3.5 Sim.
 
 There is a channel on the wowsims discord
 
-Invite is located here https://discord.gg/N9ZgAMXQ3p
+Invite is located here https://discord.gg/Qtts9vhDzK
 
 
 **THIS IS IN TESTING, THE ADDON MAY NOT WORK**
