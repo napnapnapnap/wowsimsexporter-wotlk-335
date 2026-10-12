@@ -27,7 +27,7 @@ Copy the `WowSimsExporter` folder inside `interface\addons`
 
     /wse - will open up the options window - *wip* changes do nothing atm
     /wse open - will open the exporter window.
-    /wse export will open the exporter window, generate the data, and have the data ready and highlighted for you to CTRL+C
+    /wse export - will open the exporter window, generate the data, and have the data ready and highlighted for you to CTRL+C
 
 If you change your gear, and enchants or some gems, you can either rerun `/wse export` if you closed the window and the data will be updated. or just click the `Generate Data` button.
 
